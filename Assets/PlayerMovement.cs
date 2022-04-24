@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     float speed;
     private bool isMoving = false;
     private SpriteRenderer _renderer;
+    private KeyCode lastHitKey;
     private void Start()
     {
         // Get initial position of the player on the world grid
@@ -28,56 +29,81 @@ public class PlayerMovement : MonoBehaviour
     {
        
         Vector3Int gridMovement = new Vector3Int();
-
+        
 
         if(transform.position == grid.CellToWorld(_targetCell)) {
            
-
-            if (Input.GetKey(KeyCode.W))
-            {
-                _renderer.flipX = true;
-                animator.Play("Runs");
-                gridMovement.x += 1;
-
-            }
-
-            if (Input.GetKey(KeyCode.S))
-            {
-                _renderer.flipX = false;
-                gridMovement.x -= 1;
-                animator.Play("Runs2");
-            }
-      
-            if (Input.GetKey(KeyCode.A))
-            {
-                _renderer.flipX = false;
-                gridMovement.y += 1;
-                animator.Play("Runs");
-
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                _renderer.flipX = true;
-                gridMovement.y -= 1;
-                animator.Play("Runs2");
-            }
-            if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.W))
-            {
+            //Refactor this later
             
-                if (!Input.GetKey(KeyCode.S))
-                {
-                    animator.Play("Idle2");
-                }
-                if (!Input.GetKey(KeyCode.A))
-                {
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.D))
+            {
+                _renderer.flipX = true;
 
-                    Debug.Log("HUH");
+                if (Input.GetKey(KeyCode.W))
+                {
+                    lastHitKey = KeyCode.W;
+                    animator.Play("Runs");
+                    gridMovement.x += 1;
                 }
-                animator.Play("Idles");
+                if (Input.GetKey(KeyCode.D))
+                {
+                    lastHitKey = KeyCode.D;
+                    gridMovement.y -= 1;
+                    animator.Play("Runs2");
+                }
+                
             }
-        
+            
+            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A))
+            {
+                _renderer.flipX = false;
 
-            if (gridMovement != Vector3Int.zero)
+                if (Input.GetKey(KeyCode.S))
+                {
+                    lastHitKey = KeyCode.S;
+                    gridMovement.x -= 1;
+                    animator.Play("Runs2");
+                }
+                if (Input.GetKey(KeyCode.A))
+                {
+                    lastHitKey = KeyCode.A;
+                    gridMovement.y += 1;
+                    animator.Play("Runs");
+
+                }
+
+            }
+
+            if (gridMovement == Vector3Int.zero)
+            {
+                if(_renderer.flipX == true)
+                {
+                    if(lastHitKey == KeyCode.W)
+                    {
+                        animator.Play("Idles");
+                    }
+                    else
+                    {
+                        animator.Play("Idle2");
+                    }
+                   
+                }
+                else
+                {
+                    if(lastHitKey == KeyCode.S)
+                    {
+                        animator.Play("Idle2");
+                    }
+                    else
+                    {
+                        animator.Play("Idles");
+                    }
+                   
+                }
+               
+            }
+            //Refactor this later
+            if (gridMovement != Vector3Int.zero && gridMovement != new Vector3(1,1,0) && gridMovement != new Vector3(-1,-1,0))
             {
                 _targetCell += gridMovement;
                 _targetPosition = grid.CellToWorld(_targetCell);
@@ -85,22 +111,14 @@ public class PlayerMovement : MonoBehaviour
                 
             }
 
-        
-
         }
 
-       
-        MoveToward(_targetPosition);
+       MoveToward(_targetPosition);
+        
     }
 
     private void MoveToward(Vector3 target)
     {
-
-
-      
-
         transform.position = Vector3.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
-       
-
     }
 }
