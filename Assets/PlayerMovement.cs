@@ -10,8 +10,6 @@ public class PlayerMovement : MonoBehaviour
     public Animator animator;
     private Vector3Int _targetCell;
     private Vector3 _targetPosition;
-    float speed;
-    private bool isMoving = false;
     private SpriteRenderer _renderer;
     private KeyCode lastHitKey;
     private void Start()
@@ -20,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 initialPosition = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
         _renderer = GetComponent<SpriteRenderer>();
         _targetCell = grid.WorldToCell(initialPosition);
-        speed = this.GetComponent<Rigidbody2D>().velocity.y;
+       
         // Snap the player to the center of the initial cell
         _targetPosition = grid.CellToWorld(_targetCell);
     }
@@ -33,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
 
         if(transform.position == grid.CellToWorld(_targetCell)) {
            
-            //Refactor this later
+            //Refactor this later --> Shit code
             
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.D))
             {
@@ -45,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
                     animator.Play("Runs");
                     gridMovement.x += 1;
                 }
-                if (Input.GetKey(KeyCode.D))
+               else if (Input.GetKey(KeyCode.D))
                 {
                     lastHitKey = KeyCode.D;
                     gridMovement.y -= 1;
@@ -54,7 +52,7 @@ public class PlayerMovement : MonoBehaviour
                 
             }
             
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A))
+            else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A))
             {
                 _renderer.flipX = false;
 
@@ -64,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
                     gridMovement.x -= 1;
                     animator.Play("Runs2");
                 }
-                if (Input.GetKey(KeyCode.A))
+                else if (Input.GetKey(KeyCode.A))
                 {
                     lastHitKey = KeyCode.A;
                     gridMovement.y += 1;
@@ -74,7 +72,7 @@ public class PlayerMovement : MonoBehaviour
 
             }
 
-            if (gridMovement == Vector3Int.zero)
+            else if (gridMovement == Vector3Int.zero)
             {
                 if(_renderer.flipX == true)
                 {
