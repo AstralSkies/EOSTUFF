@@ -1,2 +1,2 @@
 # EOSTUFF
-Just basic movement
+<ins> A technical demo of Endless Online Movement </ins>
